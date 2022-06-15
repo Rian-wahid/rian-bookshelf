@@ -71,7 +71,7 @@ class Books{
   
   insert(book,setStatusCode){
     try{
-    let is_not_valid=isNotValid(book)
+    let is_not_valid=this.isNotValid(book)
     if(is_not_valid){
       setStatusCode(400)
       return api.fail("Gagal menambahkan buku. "+is_not_valid).toJSON()
@@ -106,7 +106,7 @@ class Books{
   
   update(bookId,book,setStatusCode){
     try{
-      let is_not_valid = isNotValid(book)
+      let is_not_valid = this.isNotValid(book)
       if (is_not_valid) {
         setStatusCode(400)
         return api.fail("Gagal memperbarui buku. " + is_not_valid).toJSON()
