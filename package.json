@@ -1,0 +1,14 @@
+{
+  "name": "bookshelf-api",
+  "version": "1.0.0",
+  "description": "ini adalah proyek untuk submission dicoding",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Rian Wahid Prayogo",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^20.0.0"
+  }
+}
