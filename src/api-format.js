@@ -33,7 +33,7 @@ class APIFormat{
       obj.message=this.#message
     }
     if(this.#data!==null){
-      obj.data=data
+      obj.data=this.#data
     }
     return JSON.stringify(obj)
   }
