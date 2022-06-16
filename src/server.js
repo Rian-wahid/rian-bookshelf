@@ -16,11 +16,11 @@ const init = async ()=>{
       if(typeof request.query.name =="string"){
         name = request.query.name
       }
-      if (typeof request.query.reading == "number") {
-        reading = Boolean(request.query.reading)
+      if (request.query.reading == "0"||request.query.reading=="1") {
+        reading = (request.query.reading=="1")
       }
-      if (typeof request.query.finished == "number") {
-        finished = Boolean(request.query.finished)
+      if (request.query.finished == "0" || request.query.finished=="1") {
+        finished = (request.query.finished=="1")
       }
       let search=function(){
         return true

@@ -152,7 +152,19 @@ const request = (label,option,cb,body=null)=>{
         readPage:5,
         year:2022,
       })
-      
+      test("test delete data ketika id ada",{
+        method:"DELETE",
+        path:"/books/"+body.data.books[0].id,
+      },(rest)=>{
+        try{
+        let b= JSON.parse(rest.body)
+        console.log(b)
+        assert.equal(b.status,"success")
+        assert.equal(rest.statusCode,200)
+        }catch(e){
+          console.info(e)
+        }
+      })
     }catch(e){
       console.log(e)
     }
