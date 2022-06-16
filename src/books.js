@@ -46,7 +46,7 @@ class Books{
     setStatusCode(201)
     return api.success("Buku berhasil ditambahkan",{bookId:id}).toJSON()
     }catch(e){
-      
+      console.log(e)
       setStatusCode(500)
       return api.error("Buku gagal ditambahkan").toJSON()
     }
@@ -94,6 +94,7 @@ class Books{
       setStatusCode(200)
       return api.success("Buku berhasil diperbarui",null).toJSON()
     }catch(e){
+      console.log(e)
       setStatusCode(500)
       return api.error("Gagal memperbarui buku").toJSON()
     }
