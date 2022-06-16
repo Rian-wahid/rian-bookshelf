@@ -10,19 +10,52 @@ const init = async ()=>{
     method:"GET",
     path:"/books",
     handler:(request,h)=>{
+      let name="";
+      let finished;
+      let reading;
       if(typeof request.query.name =="string"){
-        return h.response(books.findByName(request.query.name)).code(200)
+        name = request.query.name
       }
       if (typeof request.query.reading == "number") {
-        let reading = Boolean(request.query.reading)
-        return h.response(books.findByReading(reading)).code(200)
+        reading = Boolean(request.query.reading)
       }
       if (typeof request.query.finished == "number") {
-        let finished = Boolean(request.query.finished)
-        return h.response(books.findByFinished(finished)).code(200)
+        finished = Boolean(request.query.finished)
       }
-      
-      return h.response(books.getAll()).code(200)
+      let search=function(){
+        return true
+      }
+      if(name.length>0||reading!=undefined||finished!=undefined){
+        if(name.length>0
+        &&reading!=undefined
+        &&finished!=undefined){
+        search = function(book){
+          return( book.finished==finished
+          &&book.reading==reading
+          &&book.name.toLowerCase().includes(name.toLowerCase()))
+        }
+        }else if(reading != undefined &&
+                 finished != undefined){
+          search=function(book){
+            return (book.finished==finished
+            &&book.reading == reading)
+          }
+       }else if(reading!=undefined){
+         search=function(book){
+           return book.reading==reading
+         }
+       }else if(finished!=undefined){
+         search = function(book){
+           return book.finished==finished
+         }
+       }else{
+         search = function(book){
+           return book.name.toLowerCase().includes(name.toLowerCase())
+         }
+       }
+       
+      }
+      return h.response(books.getAll(search)).code(200)
     }
   })
   

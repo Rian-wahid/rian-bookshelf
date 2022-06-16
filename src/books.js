@@ -10,45 +10,6 @@ class Books{
    this.#books = JSON.parse(json)
   }
   
-  findByName(name){
-    let books = this.#books.filter(book => {
-      return book.name.toLowerCase().includes(name.toLowerCase())
-    }).map(book => {
-    
-      return {
-        id: book.id,
-        name: book.name,
-        publisher: book.publisher,
-      }
-    })
-    return api.success(null, { books }).toJSON()
-  }
-  findByFinished(finished){
-    let books = this.#books.filter(book => {
-      return book.finished== finished
-    }).map(book => {
-    
-      return {
-        id: book.id,
-        name: book.name,
-        publisher: book.publisher,
-      }
-    })
-    return api.success(null, { books }).toJSON()
-  }
-  findByReading(reading){
-    let books = this.#books.filter(book=>{
-    return book.reading ==reading
-    }).map(book => {
-      
-      return {
-        id: book.id,
-        name: book.name,
-        publisher: book.publisher,
-      }
-    })
-    return api.success(null, { books }).toJSON()
-  }
   
   
   
@@ -141,8 +102,8 @@ class Books{
   
   
   
-  getAll(){
-    let books = this.#books.map(book=>{
+  getAll(search){
+    let books = this.#books.filter(search).map(book=>{
       return {
         id:book.id,
         name:book.name,
@@ -161,15 +122,7 @@ class Books{
     if(book.readPage>book.pageCount){
       return "readPage tidak boleh lebih besar dari pageCount"
     }
-    if(typeof book.author=="undefined"){
-      return "Mohon isi author buku"
-    }
-    if (typeof book.publisher == "undefined") {
-      return "Mohon isi publisher buku"
-    }
-    if (typeof book.year == "undefined") {
-      return "Mohon isi tahun buku"
-    }
+    
     if(typeof book.name!="string"
     ||typeof book.author!="string"
     ||typeof book.year!="number"
@@ -178,16 +131,7 @@ class Books{
     ||typeof book.readPage!="number"
     ||typeof book.pageCount!="number"
     ||typeof book.reading!="boolean"){
-      return `\nMohon mengirim data dengan format sebagai berikut\n{
-        "name": string,
-        "year": number,
-        "author": string,
-        "summary": string,
-        "publisher": string,
-        "pageCount": number,
-        "readPage": number,
-        "reading": boolean
-}`
+      return " "
     }
     return false
   }
@@ -198,51 +142,39 @@ class Books{
   }
   
   
-  createId(it=null){
+  createId() {
+    /*
+    fungsi ini berfungsi untuk
+    membuat id dengan panjang 24 byte
+    kenapa tidak menggunakan nanoid?
+    alasannya karena saya ingin mengurangi ketergantungan
+    library external.
     
-    let lastIterateId=it;
-    if(it==null){
-    if(!fs.existsSync(__dirname+"/lastIterateId")){
-      let buf= Buffer.from("000000")
-      buf.writeIntBE(1,0,6)
-      fs.writeFileSync(__dirname+"/lastIterateId",buf)
-      
-    }else{
-      let buf = fs.readFileSync(__dirname+"/lastIterateId")
-      lastIterateId= buf.readIntBE(0,6)
-      lastIterateId++;
-    }
-    }
-    let buf = Buffer.from([0,0,0,0,0,0,0,0,0,0])
-    buf.writeIntBE(lastIterateId||1,2,6)
-    let leftFill0=0
-    let rightFill0=0
-    for(let i=2; i<8; i++){
-      if(buf[i]!=0){
-        break;
-      }
-      buf[i]=Math.floor(Math.random()*256)
-      leftFill0++;
-    }
-    for(let i=9; i>=2; i--){
-      if(buf[i]!=0){
-        break;
-      }
-      buf[i]=Math.floor(Math.random()*256)
-      rightFill0++;
-    }
-    buf[0]=leftFill0;
-    buf[1]=rightFill0;
-    if(!this.#books.find(book=>book.id===bookId)){
-    if(lastIterateId){
-      let buf= Buffer.from("000000")
-      buf.writeIntBE(1,0,6)
-      fs.writeFileSync(__dirname+"/lastIterateId",buf)
-      
-    }
-    return buf.toString("hex")
-    }
-    return this.createId(lastIterateId||1)
+    jika server menangani lebih dari
+    1000 permintaan per detik maka keunikan
+    id yang di hasilkan adalah 1:256**8 
+    (1 banding 256 pangkat 8)
+    */
+    let date = new Date()
+    let y = date.getFullYear()
+    let m = date.getMonth()
+    let d = date.getDay()
+    let h = date.getHours()
+    let mn = date.getMinutes()
+    let s = date.getSeconds()
+    let ms = date.getMilliseconds()
+    let buf = crypto.randomBytes(18)
+    buf.writeUInt16BE(y, 0, 2)
+    buf[2] = m
+    buf[3] = d
+    buf[4] = h
+    buf[5] = mn
+    buf[6] = s
+    buf.writeUInt16BE(ms, 7, 2)
+    return buf.toString("base64")
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=+$/, '');
   }
 }
 
