@@ -92,7 +92,7 @@ class Books{
       this.save()
       
       setStatusCode(200)
-      return api.success("Buku berhasil diperbarui",null)
+      return api.success("Buku berhasil diperbarui",null).toJSON()
     }catch(e){
       setStatusCode(500)
       return api.error("Gagal memperbarui buku").toJSON()
