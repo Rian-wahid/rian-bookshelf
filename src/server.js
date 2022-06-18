@@ -3,7 +3,7 @@ const Books = require("./books.js")
 const books = new Books()
 const init = async ()=>{
   const server =  Hapi.server({
-    port:process.env.PORT||3000,
+    port:3000,
     host:"0.0.0.0"
   })
   server.route({
@@ -55,7 +55,8 @@ const init = async ()=>{
        }
        
       }
-      return h.response(books.getAll(search)).code(200)
+      return h.response(books.getAll(search))
+      .code(200).header("Content-Type","application/json").header("Access-Control-Allow-Origin","*")
     }
   })
   
@@ -66,7 +67,7 @@ const init = async ()=>{
       let httpCode=200;
       return h.response(books.findById(request.params.bookId,(code)=>{
         httpCode=code
-      })).code(httpCode)
+      })).code(httpCode).header("Content-Type","application/json").header("Access-Control-Allow-Origin","*")
     }
   })
   
@@ -77,7 +78,7 @@ const init = async ()=>{
       let httpCode = 200;
       return h.response(books.insert(request.payload, (code) => {
         httpCode = code
-      })).code(httpCode)
+      })).code(httpCode).header("Content-Type","application/json").header("Access-Control-Allow-Origin","*")
     }
   })
   
@@ -88,7 +89,7 @@ const init = async ()=>{
       let httpCode = 200;
       return h.response(books.update(request.params.bookId,request.payload, (code) => {
         httpCode = code
-      })).code(httpCode)
+      })).code(httpCode).header("Content-Type","application/json").header("Access-Control-Allow-Origin","*")
     }
   })
   
@@ -100,7 +101,7 @@ const init = async ()=>{
       let httpCode = 200;
       return h.response(books.delete(request.params.bookId, (code) => {
         httpCode = code
-      })).code(httpCode)
+      })).code(httpCode).header("Content-Type","application/json").header("Access-Control-Allow-Origin","*")
     }
   })
   

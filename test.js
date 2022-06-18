@@ -2,8 +2,8 @@ const http = require("http")
 const assert = require("assert")
 
 const server={
-  hostname:"rian-bookshelf.herokuapp.com",
-  port:80
+  hostname:"0.0.0.0",
+  port:3000
 }
 class Que{
   constructor(arg,fn){
@@ -152,6 +152,73 @@ const request = (label,option,cb,body=null)=>{
         readPage:5,
         year:2022,
       })
+      
+      test("test update data tidak valid dan id ada", {
+        method: "PUT",
+        path: "/books/" + body.data.books[0].id,
+        headers: {
+          "Content-Type": "application/json"
+        }
+      }, (rest) => {
+        try {
+          let b = JSON.parse(rest.body)
+          console.dir(b)
+          assert.equal(b.status, "fail")
+        
+          assert.equal(rest.statusCode, 400)
+      
+        } catch (e) {
+          console.log(e)
+        }
+      }, {
+        
+        author: "rianwahid",
+        publisher: "unknow",
+        summary: "test",
+        pageCount: 10,
+        reading: true,
+        readPage: 5,
+        year: 2022,
+      })
+      
+        test("test get dengan query",{path:"/books?reading=1",method:"GET"},(res)=>{
+      try{
+      let b = JSON.parse(res.body)
+      assert.equal(res.statusCode,200)
+      assert.deepEqual(b,{
+        status:"success",
+        data:{
+          books:[
+            {
+              id:body.data.books[0].id,
+              name:"belajar",
+              publisher:"unknow"
+            }
+            ]
+        }
+      })
+      console.dir(b)
+      }catch(e){
+        console.log(e)
+      }
+    })
+  
+    test("test get dengan query 2", { path: "/books?reading=0", method: "GET" }, (res) => {
+      try {
+        let body = JSON.parse(res.body)
+        assert.equal(res.statusCode, 200)
+        assert.deepEqual(body, {
+          status: "success",
+          data: {
+            books: []
+          }
+        })
+        console.dir(body)
+      } catch (e) {
+        console.log(e)
+      }
+    })
+      
       test("test delete data ketika id ada",{
         method:"DELETE",
         path:"/books/"+body.data.books[0].id,
@@ -165,10 +232,80 @@ const request = (label,option,cb,body=null)=>{
           console.info(e)
         }
       })
+      
     }catch(e){
       console.log(e)
     }
   })
 
+test("test insert data tidak valid name tidak ada", {
+  path: "/books",
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  }
+}, (res) => {
+  try {
+    let body = JSON.parse(res.body)
+    assert.equal(res.statusCode, 400)
+    assert.equal(body.status, "fail")
+    console.dir(body)
+  } catch (e) {
+    console.log(e)
+  }
+}, {
 
+  author: "rian",
+  year: 2022,
+  publisher: "unknow",
+  summary: "nothing",
+  pageCount: 10,
+  readPage: 1,
+  reading: false,
+})
+
+test("test insert data tidak valid pageCount < readPage", {
+  path: "/books",
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  }
+}, (res) => {
+  try {
+    let body = JSON.parse(res.body)
+    assert.equal(res.statusCode, 400)
+    assert.equal(body.status, "fail")
+    console.dir(body)
+  } catch (e) {
+    console.log(e)
+  }
+}, {
+
+  author: "rian",
+  year: 2022,
+  publisher: "unknow",
+  summary: "nothing",
+  pageCount: 10,
+  readPage: 12,
+  reading: false,
+})
+
+
+  test("test delete data ketika id tidak ditemukan",{
+        method:"DELETE",
+        path:"/books/tidakada",
+      },(rest)=>{
+        try{
+        let b= JSON.parse(rest.body)
+        console.log(b)
+        assert.equal(b.status,"fail")
+        assert.equal(rest.statusCode,404)
+        }catch(e){
+          console.info(e)
+        }
+      })
+      
+    
+  
+  
 start()
